@@ -26,52 +26,69 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "700"],
 });
 
+const SITE_URL = "https://www.maesinvesiveis.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://maesinvisiveis.org"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Mães Invisíveis — Ignorar Não Faz Desaparecer",
+    default: "Mães Invisíveis | Voz às Mães de Crianças Atípicas",
     template: "%s | Mães Invisíveis",
   },
   description:
-    "Projeto documental e institucional fundado por Adalgiza Baptista. Mães de filhos atípicos: ignoradas, sozinhas, mas presentes. Damos voz ao que o mundo finge não ver.",
+    "Projecto Mães-Invisíveis dedicado a dar visibilidade às mães de crianças atípicas, promovendo inclusão, apoio e capacitação de famílias.",
   keywords: [
     "Mães Invisíveis",
     "Adalgiza Baptista",
     "Maternidade Atípica",
     "Filhos Atípicos",
-    "Documentário",
+    "Autismo",
+    "TDAH",
     "Inclusão",
-    "Apoio Social",
+    "Apoio Familiar",
+    "Neurodivergência",
   ],
   authors: [{ name: "Adalgiza Baptista" }],
   creator: "Adalgiza Baptista",
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     type: "website",
     locale: "pt_PT",
-    url: "https://maesinvisiveis.org",
-    title: "Mães Invisíveis — Ignorar Não Faz Desaparecer",
+    url: SITE_URL,
+    title: "Mães Invisíveis | Voz às Mães de Crianças Atípicas",
     description:
-      "Damos voz ao que o mundo finge não ver. Projeto documental e institucional fundado por Adalgiza Baptista.",
+      "Projecto Mães-Invisíveis dedicado a dar visibilidade às mães de crianças atípicas, promovendo inclusão, apoio e capacitação de famílias.",
     siteName: "Mães Invisíveis",
     images: [
       {
-        url: "/brand/identidade-visual-maes-invisiveis.jpg",
+        url: "/og-image.jpg",
         width: 1200,
-        height: 1200,
-        alt: "Identidade Visual Mães Invisíveis",
+        height: 630,
+        alt: "Mães Invisíveis — Ignorar Não Faz Desaparecer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mães Invisíveis — Ignorar Não Faz Desaparecer",
+    title: "Mães Invisíveis | Voz às Mães de Crianças Atípicas",
     description:
-      "Damos voz ao que o mundo finge não ver. Projeto documental liderado por Adalgiza Baptista.",
-    images: ["/brand/identidade-visual-maes-invisiveis.jpg"],
+      "Projecto Mães-Invisíveis dedicado a dar visibilidade às mães de crianças atípicas.",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
   },
 };
 

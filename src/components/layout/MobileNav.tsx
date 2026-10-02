@@ -85,18 +85,10 @@ export function MobileNav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-mono text-xs text-white-soft flex items-center justify-between py-1 hover:text-brand-red transition-colors"
+                aria-label="Instagram oficial do Projecto Mães-Invisíveis"
               >
-                <span>Instagram Oficial</span>
-                <ArrowUpRight className="w-4 h-4 text-brand-red" />
-              </a>
-              <a
-                href={INSTITUTIONAL_INFO.communityLinks.whatsappCommunity}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-xs text-white-soft flex items-center justify-between py-1 hover:text-brand-red transition-colors"
-              >
-                <span>Comunidade WhatsApp</span>
-                <ArrowUpRight className="w-4 h-4 text-brand-red" />
+                <span>@_maes.invisiveis_</span>
+                <ArrowUpRight className="w-4 h-4 text-brand-red" aria-hidden="true" />
               </a>
             </div>
             <div className="pt-2 text-center">

@@ -78,15 +78,15 @@ export function Manifesto({ id = "manifesto", className = "" }: ManifestoProps) 
             {/* Action Bar */}
             <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Button
-                href={INSTITUTIONAL_INFO.communityLinks.whatsappCommunity}
+                href={INSTITUTIONAL_INFO.communityLinks.instagram}
                 isExternal
                 variant="danger"
                 size="md"
               >
-                Junta-te à Comunidade
+                Seguir no Instagram
               </Button>
               <Button href="/projeto" variant="secondary" size="md">
-                Conhecer a Visão do Projeto
+                Conhecer o Projecto
               </Button>
             </div>
           </div>

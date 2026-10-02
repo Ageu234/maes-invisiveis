@@ -2,9 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { NAVIGATION_ITEMS, INSTITUTIONAL_INFO } from "@/lib/content";
+import { usePathname } from "next/navigation";
+import { NAVIGATION_ITEMS } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { MobileNav } from "@/components/layout/MobileNav";
 
@@ -20,14 +20,14 @@ export function Navbar() {
           className="flex items-center space-x-3 group focus-visible:outline-brand-red py-1"
           aria-label="Mães Invisíveis — Página Inicial"
         >
-          {/* Logo visual reference thumbnail */}
-          <div className="relative w-9 h-9 bg-charcoal-deep border border-gray-dark flex items-center justify-center overflow-hidden shrink-0 group-hover:border-brand-red transition-colors">
+          {/* SVG Logo oficial */}
+          <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
             <Image
-              src="/brand/identidade-visual-maes-invisiveis.jpg"
-              alt="Mães Invisíveis Símbolo Oficial"
-              fill
-              className="object-cover scale-150 contrast-125"
-              sizes="36px"
+              src="/brand/logo.svg"
+              alt="Mães Invisíveis — Logótipo Oficial"
+              width={40}
+              height={40}
+              className="object-contain"
               priority
             />
           </div>

@@ -20,7 +20,7 @@ export function Footer() {
           </div>
           <div className="max-w-md">
             <p className="font-sans text-sm sm:text-base text-brand-gray leading-relaxed">
-              Mães de filhos atípicos. Ignoradas, sozinhas, mas presentes. Damos voz ao que o mundo finge não ver.
+              {INSTITUTIONAL_INFO.mission}
             </p>
           </div>
         </div>
@@ -32,13 +32,13 @@ export function Footer() {
           {/* Col 1: Brand & Founder */}
           <div className="md:col-span-5 space-y-6">
             <div className="flex items-center space-x-3">
-              <div className="relative w-10 h-10 bg-primary-black border border-gray-dark shrink-0 overflow-hidden">
+              <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
                 <Image
-                  src="/brand/identidade-visual-maes-invisiveis.jpg"
-                  alt="Mães Invisíveis"
-                  fill
-                  className="object-cover scale-150 contrast-125"
-                  sizes="40px"
+                  src="/brand/logo.svg"
+                  alt="Mães Invisíveis — Logótipo Oficial"
+                  width={40}
+                  height={40}
+                  className="object-contain"
                 />
               </div>
               <span className="font-serif text-xl font-bold tracking-tight">
@@ -47,16 +47,17 @@ export function Footer() {
             </div>
 
             <p className="font-sans text-sm text-brand-gray leading-relaxed">
-              Um movimento de visibilidade, dignidade e apoio documental fundado e liderado por{" "}
-              <strong className="text-white-soft font-medium">Adalgiza Baptista</strong>.
+              Um projecto de visibilidade, dignidade e apoio fundado e liderado por{" "}
+              <strong className="text-white-soft font-medium">Adalgiza Baptista</strong>,{" "}
+              CEO do Projecto Mães-Invisíveis.
             </p>
 
             <div className="pt-2">
               <span className="font-mono text-[10px] uppercase tracking-widest text-brand-red block mb-1">
-                Propósito
+                Objetivo
               </span>
-              <p className="font-mono text-xs text-brand-gray">
-                Dignidade, representação e comunidade para mães de filhos atípicos.
+              <p className="font-sans text-xs text-brand-gray leading-relaxed">
+                {INSTITUTIONAL_INFO.objective}
               </p>
             </div>
           </div>
@@ -86,7 +87,7 @@ export function Footer() {
               Comunidade Oficial
             </h3>
             <p className="font-sans text-sm text-brand-gray">
-              Acompanha as publicações documentais e junta-te à rede de apoio mútuo:
+              Acompanha as publicações e junta-te à rede de apoio mútuo:
             </p>
             <div className="space-y-2.5 pt-2">
               <a
@@ -94,37 +95,33 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-between p-3.5 border border-gray-dark bg-primary-black hover:border-brand-red transition-colors group"
+                aria-label="Instagram oficial do Projecto Mães-Invisíveis"
               >
                 <span className="font-mono text-xs text-white-soft group-hover:text-brand-red">
-                  Instagram @maes_invisiveis
+                  Instagram @_maes.invisiveis_
                 </span>
-                <ArrowUpRight className="w-4 h-4 text-brand-gray group-hover:text-brand-red transition-colors" />
-              </a>
-
-              <a
-                href={INSTITUTIONAL_INFO.communityLinks.whatsappCommunity}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3.5 border border-gray-dark bg-primary-black hover:border-brand-red transition-colors group"
-              >
-                <span className="font-mono text-xs text-white-soft group-hover:text-brand-red">
-                  Comunidade de Mães (WhatsApp)
-                </span>
-                <ArrowUpRight className="w-4 h-4 text-brand-gray group-hover:text-brand-red transition-colors" />
+                <ArrowUpRight className="w-4 h-4 text-brand-gray group-hover:text-brand-red transition-colors" aria-hidden="true" />
               </a>
             </div>
           </div>
         </div>
 
-        {/* Bottom Credits & Archival Label */}
+        {/* Bottom Credits */}
         <div className="border-t border-gray-dark mt-16 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-brand-gray">
           <div>
-            © {new Date().getFullYear()} Mães Invisíveis. Todos os direitos reservados.
+            © {new Date().getFullYear()} Projecto Mães-Invisíveis. Todos os direitos reservados.
           </div>
           <div className="flex items-center space-x-6">
-            <span>Fundadora: Adalgiza Baptista</span>
+            <span>CEO: Adalgiza Baptista</span>
             <span className="text-gray-dark">•</span>
-            <span>Estética Editorial & Documental</span>
+            <a
+              href={INSTITUTIONAL_INFO.communityLinks.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-brand-red transition-colors"
+            >
+              Instagram
+            </a>
           </div>
         </div>
       </div>

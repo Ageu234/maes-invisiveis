@@ -24,9 +24,16 @@ export interface NavItem {
 
 export interface ProjectInstitutionalInfo {
   name: string;
+  projectName: string;
   founderName: string;
+  founderTitle: string;
   brandStatement: string;
   tagline: string;
+  siteUrl: string;
+  aboutText?: string;
+  mission?: string;
+  objective?: string;
+  values?: string[];
   publicPositioning: {
     target: string;
     pillars: string[];
@@ -35,9 +42,8 @@ export interface ProjectInstitutionalInfo {
   };
   communityLinks: {
     instagram: string;
-    whatsappCommunity: string;
+    whatsappCommunity: string | null;
   };
-  // Pending official information marked as placeholder
   statusFlags: {
     officialHistoryProvided: boolean;
     officialMissionProvided: boolean;

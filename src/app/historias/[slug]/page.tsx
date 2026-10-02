@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { INITIAL_STORIES } from "@/lib/content";
+import { INITIAL_STORIES, INSTITUTIONAL_INFO } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
+
+const SITE_URL = "https://www.maesinvesiveis.com";
 
 interface PageProps {
   params: Promise<{
@@ -29,13 +31,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const canonicalUrl = `${SITE_URL}/historias/${story.slug}`;
+
   return {
-    title: `${story.title} | Mães Invisíveis`,
+    title: story.title,
     description: story.excerpt,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${story.title} | Mães Invisíveis`,
       description: story.excerpt,
-      images: [{ url: story.featuredImage }],
+      url: canonicalUrl,
+      images: [
+        {
+          url: story.featuredImage,
+          width: 1200,
+          height: 800,
+          alt: story.featuredImageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${story.title} | Mães Invisíveis`,
+      description: story.excerpt,
+      images: [story.featuredImage],
     },
   };
 }
@@ -58,8 +79,8 @@ export default async function StoryDetailPage({ params }: PageProps) {
           href="/historias"
           className="inline-flex items-center space-x-2 font-mono text-xs uppercase tracking-wider text-brand-gray hover:text-brand-red transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Voltar ao Arquivo de Histórias</span>
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+          <span>Voltar aos Registos</span>
         </Link>
         <span className="font-mono text-xs uppercase tracking-widest text-brand-red font-semibold">
           {story.documentRef}
@@ -70,7 +91,7 @@ export default async function StoryDetailPage({ params }: PageProps) {
       <header className="max-w-4xl mx-auto space-y-6 text-center">
         <div className="flex items-center justify-center space-x-4 font-mono text-xs uppercase tracking-widest text-brand-gray">
           <span>{story.location}</span>
-          <span className="text-gray-dark">•</span>
+          <span className="text-gray-dark" aria-hidden="true">•</span>
           <span>{story.date}</span>
         </div>
 
@@ -123,13 +144,13 @@ export default async function StoryDetailPage({ params }: PageProps) {
             &ldquo;Ignorar não faz desaparecer.&rdquo;
           </p>
           <span className="font-mono text-xs uppercase tracking-widest text-brand-red block font-semibold">
-            Mães Invisíveis — Adalgiza Baptista
+            Projecto Mães-Invisíveis — Adalgiza Baptista
           </span>
         </div>
 
         {/* Tags & Action Bar */}
         <div className="pt-8 border-t border-gray-dark flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" aria-label="Etiquetas">
             {story.tags.map((tag) => (
               <span
                 key={tag}
@@ -140,24 +161,28 @@ export default async function StoryDetailPage({ params }: PageProps) {
             ))}
           </div>
 
-          <Button href="/contacto" variant="danger">
-            Apoiar Esta Causa
+          <Button
+            href={INSTITUTIONAL_INFO.communityLinks.instagram}
+            isExternal
+            variant="danger"
+          >
+            Seguir no Instagram
           </Button>
         </div>
       </div>
 
-      {/* Related Stories from the Archive */}
+      {/* Related Stories */}
       {otherStories.length > 0 && (
-        <section className="pt-16 border-t border-gray-dark space-y-8">
+        <section className="pt-16 border-t border-gray-dark space-y-8" aria-label="Outros registos">
           <div className="flex items-center justify-between">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-red">
-              Outros Registos do Arquivo
+              Outros Registos
             </span>
             <Link
               href="/historias"
               className="font-mono text-xs text-brand-gray hover:text-primary-white uppercase tracking-wider"
             >
-              Ver Todas →
+              Ver Todos →
             </Link>
           </div>
 
@@ -187,8 +212,8 @@ export default async function StoryDetailPage({ params }: PageProps) {
                     </h4>
                   </div>
                   <span className="inline-flex items-center font-mono text-xs text-white-soft group-hover:text-brand-red transition-colors pt-2">
-                    <span>Ler relato</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+                    <span>Ler registo</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 ml-1" aria-hidden="true" />
                   </span>
                 </div>
               </Link>
