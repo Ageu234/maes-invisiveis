@@ -1,9 +1,9 @@
 import { MetadataRoute } from "next";
-import { INITIAL_STORIES } from "@/lib/content";
+import { getPublishedStories } from "@/lib/data/stories";
 
 const SITE_URL = "https://www.maesinvesiveis.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
@@ -37,7 +37,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const storyPages: MetadataRoute.Sitemap = INITIAL_STORIES.map((story) => ({
+  const stories = await getPublishedStories();
+
+  const storyPages: MetadataRoute.Sitemap = stories.map((story) => ({
     url: `${SITE_URL}/historias/${story.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

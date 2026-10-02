@@ -1,19 +1,31 @@
-/**
- * Supabase Client Initializer (Client-side)
- * Ready for Phase 3 environment variables:
- * NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
- */
+import { createBrowserClient } from "@supabase/ssr";
+import { Database } from "@/types/database";
 
-export function getSupabaseClient() {
+let clientInstance: ReturnType<typeof createBrowserClient<Database>> | null = null;
+
+/**
+ * Cliente Supabase para uso em Client Components (Browser).
+ * Utiliza as variáveis de ambiente públicas NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.
+ * Retorna null graciosamente caso as variáveis não estejam configuradas.
+ */
+export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Graceful fallback during Phase 1 (static & local dataset mode)
     return null;
   }
 
-  // Once Supabase SDK is installed in Phase 3:
-  // return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
-  return null;
+  if (!clientInstance) {
+    clientInstance = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
+  }
+
+  return clientInstance;
+}
+
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
 }

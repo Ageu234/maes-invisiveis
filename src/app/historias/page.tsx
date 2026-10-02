@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { INITIAL_STORIES } from "@/lib/content";
+import { getPublishedStories } from "@/lib/data/stories";
 import { SectionHeading } from "@/components/editorial/SectionHeading";
 import { StoryCard } from "@/components/editorial/StoryCard";
 import { Button } from "@/components/ui/Button";
@@ -23,7 +23,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HistoriasPage() {
+export default async function HistoriasPage() {
+  const stories = await getPublishedStories();
+
   return (
     <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 space-y-16 sm:space-y-24">
       {/* =========================================================================
@@ -44,7 +46,7 @@ export default function HistoriasPage() {
         <div className="flex items-center space-x-3">
           <span className="w-2 h-2 bg-brand-red inline-block" aria-hidden="true" />
           <span className="text-white-soft uppercase tracking-wider">
-            Registos disponíveis: {INITIAL_STORIES.length}
+            Registos disponíveis: {stories.length}
           </span>
         </div>
         <div className="flex items-center space-x-4 uppercase tracking-widest text-[11px]">
@@ -58,7 +60,7 @@ export default function HistoriasPage() {
           STORIES GRID
           ========================================================================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {INITIAL_STORIES.map((story) => (
+        {stories.map((story) => (
           <StoryCard key={story.id} story={story} />
         ))}
       </div>

@@ -9,22 +9,40 @@ import { Button } from "@/components/ui/Button";
 export function ContactoForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
     subject: "Acolhimento / Apoio",
     message: "",
+    hp_website: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage(null);
 
-    // Resposta visual — integração real com Supabase numa fase posterior
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Ocorreu um erro ao enviar a mensagem.");
+      }
+
       setSubmitted(true);
-    }, 800);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro de ligação. Tente novamente.";
+      setErrorMessage(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,6 +82,7 @@ export function ContactoForm() {
                       contact: "",
                       subject: "Acolhimento / Apoio",
                       message: "",
+                      hp_website: "",
                     });
                   }}
                   variant="secondary"
@@ -75,6 +94,27 @@ export function ContactoForm() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {/* Campo Honeypot Invisível para Protecção Anti-Spam */}
+              <input
+                type="text"
+                name="hp_website"
+                value={formData.hp_website}
+                onChange={(e) => setFormData({ ...formData, hp_website: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
+
+              {errorMessage && (
+                <div
+                  role="alert"
+                  className="p-4 border border-brand-red bg-primary-black font-mono text-xs text-brand-red"
+                >
+                  {errorMessage}
+                </div>
+              )}
+
               <div className="space-y-2">
                 <label
                   htmlFor="contact-name"

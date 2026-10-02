@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { getPublishedStories, getPublishedStoryBySlug } from "@/lib/data/stories";
 import { INITIAL_STORIES, INSTITUTIONAL_INFO } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 
@@ -16,14 +17,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return INITIAL_STORIES.map((story) => ({
+  const stories = await getPublishedStories();
+  return stories.map((story) => ({
     slug: story.slug,
   }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const story = INITIAL_STORIES.find((s) => s.slug === slug);
+  const story = await getPublishedStoryBySlug(slug);
 
   if (!story) {
     return {
@@ -63,13 +65,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function StoryDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const story = INITIAL_STORIES.find((s) => s.slug === slug);
+  const story = await getPublishedStoryBySlug(slug);
 
   if (!story) {
     notFound();
   }
 
-  const otherStories = INITIAL_STORIES.filter((s) => s.slug !== slug);
+  const allStories = await getPublishedStories();
+  const otherStories = allStories.filter((s) => s.slug !== slug);
 
   return (
     <article className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 space-y-16 sm:space-y-24">
@@ -82,26 +85,32 @@ export default async function StoryDetailPage({ params }: PageProps) {
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           <span>Voltar aos Registos</span>
         </Link>
-        <span className="font-mono text-xs uppercase tracking-widest text-brand-red font-semibold">
-          {story.documentRef}
-        </span>
+        {story.documentRef ? (
+          <span className="font-mono text-xs uppercase tracking-widest text-brand-red font-semibold">
+            {story.documentRef}
+          </span>
+        ) : <span />}
       </div>
 
       {/* Editorial Header */}
       <header className="max-w-4xl mx-auto space-y-6 text-center">
-        <div className="flex items-center justify-center space-x-4 font-mono text-xs uppercase tracking-widest text-brand-gray">
-          <span>{story.location}</span>
-          <span className="text-gray-dark" aria-hidden="true">•</span>
-          <span>{story.date}</span>
-        </div>
+        {(story.location || story.date) && (
+          <div className="flex items-center justify-center space-x-4 font-mono text-xs uppercase tracking-widest text-brand-gray">
+            {story.location && <span>{story.location}</span>}
+            {story.location && story.date && <span className="text-gray-dark" aria-hidden="true">•</span>}
+            {story.date && <span>{story.date}</span>}
+          </div>
+        )}
 
         <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary-white leading-[1.1]">
           {story.title}
         </h1>
 
-        <p className="font-serif text-xl sm:text-2xl text-white-soft/80 italic font-light max-w-2xl mx-auto leading-relaxed">
-          &ldquo;{story.subtitle}&rdquo;
-        </p>
+        {story.subtitle && (
+          <p className="font-serif text-xl sm:text-2xl text-white-soft/80 italic font-light max-w-2xl mx-auto leading-relaxed">
+            &ldquo;{story.subtitle}&rdquo;
+          </p>
+        )}
       </header>
 
       {/* Main Photographic Document */}
@@ -118,9 +127,11 @@ export default async function StoryDetailPage({ params }: PageProps) {
         </div>
         <div className="pt-3 flex flex-col sm:flex-row items-baseline justify-between gap-1 font-mono text-[11px] text-brand-gray">
           <span>{story.featuredImageAlt}</span>
-          <span className="uppercase tracking-widest text-[10px]">
-            {story.photographerCredit}
-          </span>
+          {story.photographerCredit && (
+            <span className="uppercase tracking-widest text-[10px]">
+              {story.photographerCredit}
+            </span>
+          )}
         </div>
       </div>
 

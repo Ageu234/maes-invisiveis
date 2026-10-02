@@ -3,11 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowDown, ArrowUpRight, Heart, Shield, Eye } from "lucide-react";
-import { INITIAL_STORIES, INSTITUTIONAL_INFO } from "@/lib/content";
+import { getPublishedStories } from "@/lib/data/stories";
+import { INSTITUTIONAL_INFO } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { Manifesto } from "@/components/editorial/Manifesto";
 import { SectionHeading } from "@/components/editorial/SectionHeading";
 import { StoryCard } from "@/components/editorial/StoryCard";
+import { HeroVideo } from "@/components/editorial/HeroVideo";
 
 const SITE_URL = "https://www.maesinvesiveis.com";
 
@@ -27,13 +29,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const stories = await getPublishedStories();
   return (
-    <div className="space-y-24 sm:space-y-36">
+    <div className="space-y-20 sm:space-y-32">
       {/* =========================================================================
-          HERO SECTION
+          HERO DE VÍDEO OFICIAL (Registo Audiovisual & Editorial)
           ========================================================================= */}
-      <section className="relative pt-6 sm:pt-14 pb-16 px-4 sm:px-6 lg:px-8 border-b border-gray-dark">
+      <HeroVideo />
+
+      {/* =========================================================================
+          APRESENTAÇÃO DO PROJECTO MÃES-INVISÍVEIS
+          ========================================================================= */}
+      <section
+        id="apresentacao-projeto"
+        className="relative pt-4 sm:pt-8 pb-16 px-4 sm:px-6 lg:px-8 border-b border-gray-dark scroll-mt-24"
+        aria-label="Apresentação do Projecto Mães-Invisíveis"
+      >
         <div className="max-w-[1280px] mx-auto">
           {/* Top Identification Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-gray-dark text-brand-gray font-mono text-[11px] uppercase tracking-widest">
@@ -54,9 +66,9 @@ export default function HomePage() {
                 <span className="font-mono text-xs uppercase tracking-widest text-brand-red block">
                   Projecto Mães-Invisíveis
                 </span>
-                <h1 className="font-serif text-5xl sm:text-6xl xl:text-7xl font-bold tracking-tight text-primary-white leading-[1.04]">
-                  IGNORAR <span className="text-brand-red">NÃO</span> FAZ DESAPARECER.
-                </h1>
+                <h2 className="font-serif text-4xl sm:text-5xl xl:text-6xl font-bold tracking-tight text-primary-white leading-[1.06]">
+                  Acolhimento, Voz e Dignidade.
+                </h2>
               </div>
 
               <div className="max-w-xl space-y-5 text-brand-gray font-sans text-base sm:text-lg leading-relaxed">
@@ -205,7 +217,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {INITIAL_STORIES.map((story) => (
+          {stories.map((story) => (
             <StoryCard key={story.id} story={story} />
           ))}
         </div>
