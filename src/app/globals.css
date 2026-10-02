@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-black: #000000;
+  --color-charcoal-deep: #0A0A0A;
+  --color-primary-white: #FFFFFF;
+  --color-white-soft: #F5F5F5;
+  --color-brand-gray: #737373;
+  --color-gray-dark: #1F1F1F;
+  --color-brand-red: #D91616;
+  --color-brand-red-secondary: #E50914;
+
+  --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  --max-w-editorial: 1280px;
+}
+
+:root {
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --color-charcoal: #0A0A0A;
+  --color-border-dark: #1F1F1F;
+  --color-muted-gray: #737373;
+  --color-crimson: #D91616;
+  --color-crimson-bright: #E50914;
+}
+
+/* Base resets & Editorial typography */
+html {
+  background-color: #000000;
+  color: #FFFFFF;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-inter), "Inter", sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle Film / Documentary Grain Overlay */
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Accessibility Focus Ring */
+:focus-visible {
+  outline: 2px solid #D91616;
+  outline-offset: 3px;
+}
+
+/* Editorial Red Strike element for "Invisíveis" */
+.strike-red {
+  position: relative;
+  display: inline-block;
+}
+
+.strike-red::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 52%;
+  height: 2px;
+  background-color: #D91616;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Editorial Rule / Divider */
+.editorial-rule {
+  height: 1px;
+  background-color: #1F1F1F;
+  width: 100%;
+}
+
+.editorial-rule-red {
+  height: 2px;
+  background-color: #D91616;
+}
+
+/* Custom Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F1F1F;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #737373;
+}
