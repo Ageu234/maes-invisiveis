@@ -86,9 +86,9 @@ export function AdminShell({ children }: AdminShellProps) {
           {/* Brand Header */}
           <div className="p-6 border-b border-gray-dark">
             <Link href="/admin/dashboard" className="flex items-center space-x-3 group">
-              <div className="relative w-8 h-8 shrink-0">
+              <div className="relative w-9 h-9 shrink-0">
                 <Image
-                  src="/brand/logo.svg"
+                  src="/brand/logo-symbol.svg"
                   alt="Mães Invisíveis"
                   fill
                   className="object-contain"
@@ -168,9 +168,9 @@ export function AdminShell({ children }: AdminShellProps) {
           ===================================================================== */}
       <header className="md:hidden flex items-center justify-between p-4 bg-charcoal-deep border-b border-gray-dark sticky top-0 z-40">
         <Link href="/admin/dashboard" className="flex items-center space-x-2">
-          <div className="relative w-6 h-6 shrink-0">
+          <div className="relative w-8 h-8 shrink-0">
             <Image
-              src="/brand/logo.svg"
+              src="/brand/logo-symbol.svg"
               alt="Mães Invisíveis"
               fill
               className="object-contain"

@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
         <div className="text-center space-y-4">
           <Link href="/" className="inline-block relative w-16 h-16 mx-auto">
             <Image
-              src="/brand/logo.svg"
+              src="/brand/logo-symbol.svg"
               alt="Mães Invisíveis"
               fill
               className="object-contain"

@@ -59,12 +59,12 @@ export function MobileNav() {
           className="flex items-center space-x-3 group"
           aria-label="Página Inicial — Mães Invisíveis"
         >
-          <div className="relative w-9 h-9 shrink-0">
+          <div className="relative w-10 h-10 shrink-0">
             <Image
-              src="/brand/logo.svg"
+              src="/brand/logo-symbol.svg"
               alt="Logótipo Mães Invisíveis"
-              width={36}
-              height={36}
+              width={40}
+              height={40}
               className="object-contain"
               priority
             />

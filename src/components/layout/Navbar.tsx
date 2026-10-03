@@ -20,13 +20,13 @@ export function Navbar() {
           className="flex items-center space-x-3 group focus-visible:outline-brand-red py-1"
           aria-label="Mães Invisíveis — Página Inicial"
         >
-          {/* SVG Logo oficial */}
-          <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
+          {/* Símbolo Oficial do Logótipo */}
+          <div className="relative w-11 h-11 shrink-0 flex items-center justify-center">
             <Image
-              src="/brand/logo.svg"
-              alt="Mães Invisíveis — Logótipo Oficial"
-              width={40}
-              height={40}
+              src="/brand/logo-symbol.svg"
+              alt="Mães Invisíveis — Símbolo Oficial"
+              width={44}
+              height={44}
               className="object-contain"
               priority
             />
