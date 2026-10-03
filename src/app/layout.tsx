@@ -93,6 +93,39 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.maesinvesiveis.com/#organization",
+      "name": "Projecto Mães-Invisíveis",
+      "alternateName": "Mães Invisíveis",
+      "url": "https://www.maesinvesiveis.com/",
+      "logo": "https://www.maesinvesiveis.com/brand/logo.svg",
+      "slogan": "IGNORAR NÃO FAZ DESAPARECER",
+      "description":
+        "Damos visibilidade a quem cuida: mães que enfrentam o medo, a culpa e a luta pela aceitação após o diagnóstico dos filhos.",
+      "founder": {
+        "@type": "Person",
+        "name": "Adalgiza Baptista",
+        "jobTitle": "CEO do Projecto Mães-Invisíveis",
+      },
+      "sameAs": ["https://www.instagram.com/_maes.invisiveis_/"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.maesinvesiveis.com/#website",
+      "url": "https://www.maesinvesiveis.com/",
+      "name": "Mães Invisíveis",
+      "publisher": {
+        "@id": "https://www.maesinvesiveis.com/#organization",
+      },
+      "inLanguage": "pt-PT",
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -104,6 +137,12 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-primary-black text-primary-white antialiased flex flex-col min-h-screen">
+        {/* Schema.org JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+
         {/* Accessibility Skip Link */}
         <SkipToContent />
 

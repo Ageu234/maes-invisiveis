@@ -168,7 +168,7 @@ export function HeroVideo({
                   playsInline
                   muted={isMuted}
                   loop
-                  preload="auto"
+                  preload="metadata"
                   onPlay={() => setIsPlaying(true)}
                   onPause={() => setIsPlaying(false)}
                   aria-label="Apresentação audiovisual oficial do Projecto Mães-Invisíveis com Adalgiza Baptista e o filho"
@@ -251,7 +251,7 @@ export function HeroVideo({
             playsInline
             muted={isMuted}
             loop
-            preload="auto"
+            preload="metadata"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             aria-label="Apresentação audiovisual oficial do Projecto Mães-Invisíveis com Adalgiza Baptista"
