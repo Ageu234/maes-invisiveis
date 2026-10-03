@@ -106,6 +106,19 @@ CREATE INDEX IF NOT EXISTS idx_contact_messages_status ON public.contact_message
 CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at ON public.contact_messages (created_at DESC);
 
 -- ==============================================================================
+-- 6B. TABELA: page_views (Métricas de Visitas Diárias ao Website)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.page_views (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  path TEXT NOT NULL DEFAULT '/',
+  view_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_page_views_date ON public.page_views (view_date DESC);
+CREATE INDEX IF NOT EXISTS idx_page_views_path ON public.page_views (path);
+
+-- ==============================================================================
 -- 7. TABELA: media (Registo de Ficheiros do Storage)
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.media (
@@ -299,6 +312,27 @@ DROP POLICY IF EXISTS "Admin delete contact_messages" ON public.contact_messages
 CREATE POLICY "Admin delete contact_messages"
   ON public.contact_messages
   FOR DELETE
+  TO authenticated
+  USING (public.is_admin());
+
+-- ------------------------------------------------------------------------------
+-- POLÍTICAS: page_views (Métricas de Visitas)
+-- ------------------------------------------------------------------------------
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+
+-- Público (anónimo ou autenticado): registar visualização de página
+DROP POLICY IF EXISTS "Public insert page_views" ON public.page_views;
+CREATE POLICY "Public insert page_views"
+  ON public.page_views
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- Administrador: ler métricas de visitas
+DROP POLICY IF EXISTS "Admin select page_views" ON public.page_views;
+CREATE POLICY "Admin select page_views"
+  ON public.page_views
+  FOR SELECT
   TO authenticated
   USING (public.is_admin());
 

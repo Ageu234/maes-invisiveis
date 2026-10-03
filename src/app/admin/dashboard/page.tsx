@@ -12,6 +12,10 @@ import {
   ExternalLink,
   Settings,
   Eye,
+  TrendingUp,
+  BarChart3,
+  Calendar,
+  Globe,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { INITIAL_STORIES } from "@/lib/content";
@@ -22,6 +26,21 @@ interface DashboardStats {
   draftStories: number;
   totalMessages: number;
   unreadMessages: number;
+  todayVisits: number;
+  yesterdayVisits: number;
+  totalVisits: number;
+}
+
+interface DailyVisitPoint {
+  date: string;
+  dayLabel: string;
+  count: number;
+  isToday: boolean;
+}
+
+interface TopPage {
+  path: string;
+  count: number;
 }
 
 interface RecentStory {
@@ -49,8 +68,13 @@ export default function AdminDashboardPage() {
     draftStories: 0,
     totalMessages: 0,
     unreadMessages: 0,
+    todayVisits: 0,
+    yesterdayVisits: 0,
+    totalVisits: 0,
   });
 
+  const [dailyHistory, setDailyHistory] = useState<DailyVisitPoint[]>([]);
+  const [topPages, setTopPages] = useState<TopPage[]>([]);
   const [recentStories, setRecentStories] = useState<RecentStory[]>([]);
   const [recentMessages, setRecentMessages] = useState<RecentMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +83,6 @@ export default function AdminDashboardPage() {
     async function loadDashboardData() {
       const supabase = createClient();
       if (!supabase) {
-        // Fallback para estado inicial estático
         setRecentStories(
           INITIAL_STORIES.map((s) => ({
             id: s.id,
@@ -94,7 +117,6 @@ export default function AdminDashboardPage() {
 
           setRecentStories(storiesData.slice(0, 5));
         } else {
-          // Fallback se tabela stories estiver vazia
           setRecentStories(
             INITIAL_STORIES.map((s) => ({
               id: s.id,
@@ -122,6 +144,94 @@ export default function AdminDashboardPage() {
           }));
           setRecentMessages(messagesData.slice(0, 5));
         }
+
+        // 3. Obter métricas de visitas diárias (page_views)
+        const today = new Date();
+        const todayStr = today.toISOString().split("T")[0];
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+        const fourteenDaysAgo = new Date();
+        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+        const fourteenDaysAgoStr = fourteenDaysAgo.toISOString().split("T")[0];
+
+        const { data: viewsData } = await supabase
+          .from("page_views")
+          .select("id, path, view_date, created_at")
+          .gte("view_date", fourteenDaysAgoStr)
+          .order("created_at", { ascending: true });
+
+        const { count: totalCount } = await supabase
+          .from("page_views")
+          .select("id", { count: "exact", head: true });
+
+        if (viewsData) {
+          const todayVisits = viewsData.filter((v) => v.view_date === todayStr).length;
+          const yesterdayVisits = viewsData.filter((v) => v.view_date === yesterdayStr).length;
+
+          setStats((prev) => ({
+            ...prev,
+            todayVisits,
+            yesterdayVisits,
+            totalVisits: totalCount ?? viewsData.length,
+          }));
+
+          // Construir histórico diário contínuo dos últimos 14 dias
+          const daysMap: Record<string, number> = {};
+          viewsData.forEach((v) => {
+            daysMap[v.view_date] = (daysMap[v.view_date] || 0) + 1;
+          });
+
+          const historyPoints: DailyVisitPoint[] = [];
+          for (let i = 13; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split("T")[0];
+            const isT = dateStr === todayStr;
+
+            const dayLabel = isT
+              ? "Hoje"
+              : d.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" });
+
+            historyPoints.push({
+              date: dateStr,
+              dayLabel,
+              count: daysMap[dateStr] || 0,
+              isToday: isT,
+            });
+          }
+          setDailyHistory(historyPoints);
+
+          // Contagem de Top Páginas
+          const pathMap: Record<string, number> = {};
+          viewsData.forEach((v) => {
+            const clean = v.path || "/";
+            pathMap[clean] = (pathMap[clean] || 0) + 1;
+          });
+
+          const sortedPages = Object.entries(pathMap)
+            .map(([path, count]) => ({ path, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+
+          setTopPages(sortedPages);
+        } else {
+          // Preencher histórico vazio dos últimos 14 dias
+          const emptyHistory: DailyVisitPoint[] = [];
+          for (let i = 13; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            emptyHistory.push({
+              date: d.toISOString().split("T")[0],
+              dayLabel: i === 0 ? "Hoje" : d.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" }),
+              count: 0,
+              isToday: i === 0,
+            });
+          }
+          setDailyHistory(emptyHistory);
+        }
       } catch (err) {
         console.error("Erro ao carregar dados do dashboard:", err);
       } finally {
@@ -131,6 +241,8 @@ export default function AdminDashboardPage() {
 
     loadDashboardData();
   }, []);
+
+  const maxDailyVisit = Math.max(...dailyHistory.map((d) => d.count), 1);
 
   return (
     <div className="space-y-10">
@@ -144,7 +256,7 @@ export default function AdminDashboardPage() {
             Dashboard
           </h1>
           <p className="font-sans text-xs text-brand-gray mt-1">
-            Gestão editorial e acompanhamento de contactos do Projecto Mães-Invisíveis
+            Métricas de tráfego, gestão editorial e acompanhamento de contactos do Projecto Mães-Invisíveis
           </p>
         </div>
 
@@ -168,12 +280,33 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+        {/* Visitas Hoje (NOVA MÉTRICA) */}
+        <div className="p-6 border border-brand-red/40 bg-charcoal-deep space-y-3 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-brand-red/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="flex items-center justify-between text-brand-gray">
+            <span className="font-mono text-xs uppercase tracking-wider text-brand-red font-semibold">
+              Visitas Hoje
+            </span>
+            <Eye className="w-4 h-4 text-brand-red" />
+          </div>
+          <div className="font-serif text-4xl font-bold text-primary-white">
+            {stats.todayVisits}
+          </div>
+          <div className="flex items-center space-x-1.5 text-xs font-mono text-brand-gray">
+            <span>Ontem:</span>
+            <span className="text-primary-white font-semibold">{stats.yesterdayVisits}</span>
+            <span className="text-gray-dark">|</span>
+            <span>Total:</span>
+            <span className="text-brand-red font-semibold">{stats.totalVisits}</span>
+          </div>
+        </div>
+
         {/* Histórias Publicadas */}
         <div className="p-6 border border-gray-dark bg-charcoal-deep space-y-3">
           <div className="flex items-center justify-between text-brand-gray">
             <span className="font-mono text-xs uppercase tracking-wider">Publicadas</span>
-            <CheckCircle className="w-4 h-4 text-brand-red" />
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="font-serif text-3xl font-bold text-primary-white">
             {stats.publishedStories}
@@ -187,7 +320,7 @@ export default function AdminDashboardPage() {
         <div className="p-6 border border-gray-dark bg-charcoal-deep space-y-3">
           <div className="flex items-center justify-between text-brand-gray">
             <span className="font-mono text-xs uppercase tracking-wider">Rascunhos</span>
-            <Clock className="w-4 h-4 text-brand-gray" />
+            <Clock className="w-4 h-4 text-amber-400" />
           </div>
           <div className="font-serif text-3xl font-bold text-primary-white">
             {stats.draftStories}
@@ -200,21 +333,21 @@ export default function AdminDashboardPage() {
         {/* Mensagens Não Lidas */}
         <div className="p-6 border border-gray-dark bg-charcoal-deep space-y-3">
           <div className="flex items-center justify-between text-brand-gray">
-            <span className="font-mono text-xs uppercase tracking-wider">Mensagens Novas</span>
+            <span className="font-mono text-xs uppercase tracking-wider">Mensagens</span>
             <Mail className="w-4 h-4 text-brand-red" />
           </div>
           <div className="font-serif text-3xl font-bold text-primary-white">
             {stats.unreadMessages}
           </div>
           <p className="font-sans text-xs text-brand-gray">
-            Pedidos de acolhimento e contacto pendentes
+            Pedidos de acolhimento novos
           </p>
         </div>
 
-        {/* Total de Histórias */}
+        {/* Total Acervo */}
         <div className="p-6 border border-gray-dark bg-charcoal-deep space-y-3">
           <div className="flex items-center justify-between text-brand-gray">
-            <span className="font-mono text-xs uppercase tracking-wider">Total Acervo</span>
+            <span className="font-mono text-xs uppercase tracking-wider">Acervo Total</span>
             <BookOpen className="w-4 h-4 text-brand-gray" />
           </div>
           <div className="font-serif text-3xl font-bold text-primary-white">
@@ -223,6 +356,130 @@ export default function AdminDashboardPage() {
           <p className="font-sans text-xs text-brand-gray">
             Registos fotográficos no arquivo
           </p>
+        </div>
+      </div>
+
+      {/* SEÇÃO ANALYTICS: Gráfico de Visitas Diárias + Top Páginas */}
+      <div className="border border-gray-dark bg-charcoal-deep p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-dark pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-brand-red/10 border border-brand-red/30">
+              <BarChart3 className="w-5 h-5 text-brand-red" />
+            </div>
+            <div>
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-primary-white">
+                Tráfego &amp; Visitas Diárias
+              </h2>
+              <p className="font-mono text-xs text-brand-gray">
+                Acompanhamento diário de visualizações de páginas nos últimos 14 dias
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 text-xs font-mono text-brand-gray">
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2.5 h-2.5 bg-brand-red inline-block" />
+              <span>Hoje</span>
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2.5 h-2.5 bg-gray-dark inline-block" />
+              <span>Dias Anteriores</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+          {/* Gráfico de Barras Minimalista (Últimos 14 Dias) */}
+          <div className="lg:col-span-8 space-y-3">
+            <div className="h-56 flex items-end justify-between gap-2 sm:gap-3 pt-6 pb-2 px-2 border-b border-gray-dark/60">
+              {dailyHistory.map((point) => {
+                const heightPercent = Math.max(
+                  Math.round((point.count / maxDailyVisit) * 100),
+                  point.count > 0 ? 8 : 4
+                );
+                return (
+                  <div
+                    key={point.date}
+                    className="flex-1 flex flex-col items-center justify-end h-full group relative"
+                  >
+                    {/* Tooltip no Hover */}
+                    <div className="absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-primary-black border border-gray-dark px-2 py-0.5 rounded text-[10px] font-mono text-primary-white whitespace-nowrap pointer-events-none z-30 shadow-lg">
+                      {point.count} {point.count === 1 ? "visita" : "visitas"}
+                    </div>
+
+                    {/* Contagem no topo da barra se houver visitas */}
+                    {point.count > 0 && (
+                      <span className="font-mono text-[10px] text-brand-gray mb-1 group-hover:text-primary-white transition-colors">
+                        {point.count}
+                      </span>
+                    )}
+
+                    {/* Barra Visual */}
+                    <div
+                      style={{ height: `${heightPercent}%` }}
+                      className={`w-full max-w-[28px] rounded-t-sm transition-all duration-500 ${
+                        point.isToday
+                          ? "bg-brand-red hover:bg-brand-red/90 shadow-md shadow-brand-red/20"
+                          : "bg-[#262626] hover:bg-gray-dark"
+                      }`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Rótulos dos Dias */}
+            <div className="flex items-center justify-between text-[10px] font-mono text-brand-gray px-1">
+              {dailyHistory.map((point, idx) => (
+                <span
+                  key={point.date}
+                  className={`text-center flex-1 ${
+                    point.isToday ? "text-brand-red font-bold" : idx % 2 === 0 ? "opacity-100" : "opacity-60 hidden sm:inline"
+                  }`}
+                >
+                  {point.dayLabel}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Páginas Visitadas */}
+          <div className="lg:col-span-4 bg-[#0A0A0A] border border-gray-dark/80 p-5 space-y-4">
+            <div className="flex items-center space-x-2 text-primary-white border-b border-gray-dark pb-2">
+              <Globe className="w-4 h-4 text-brand-red" />
+              <span className="font-serif text-sm font-semibold">Páginas Mais Visitadas</span>
+            </div>
+
+            {topPages.length === 0 ? (
+              <div className="py-6 text-center text-xs font-mono text-brand-gray">
+                Nenhum dado registado ainda.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {topPages.map((page, idx) => {
+                  const percent = Math.round((page.count / (stats.totalVisits || 1)) * 100);
+                  return (
+                    <div key={page.path} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-primary-white truncate max-w-[160px]">
+                          {page.path === "/" ? "/ (Início)" : page.path}
+                        </span>
+                        <span className="text-brand-gray">
+                          {page.count} <span className="text-[10px] text-brand-red">({percent}%)</span>
+                        </span>
+                      </div>
+                      <div className="w-full h-1 bg-[#1F1F1F] rounded-full overflow-hidden">
+                        <div
+                          style={{ width: `${Math.min(percent, 100)}%` }}
+                          className={`h-full ${idx === 0 ? "bg-brand-red" : "bg-gray-dark"}`}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

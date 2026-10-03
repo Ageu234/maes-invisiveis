@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabaseClient } from "@/lib/supabase/public";
 import { INITIAL_STORIES } from "@/lib/content";
 import { Story } from "@/types/content";
 import { Database } from "@/types/database";
@@ -43,7 +43,7 @@ function mapStoryRowToStory(row: StoryRow): Story {
  */
 export async function getPublishedStories(): Promise<Story[]> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabaseClient();
     if (!supabase) {
       return INITIAL_STORIES;
     }
@@ -70,7 +70,7 @@ export async function getPublishedStories(): Promise<Story[]> {
  */
 export async function getPublishedStoryBySlug(slug: string): Promise<Story | null> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabaseClient();
     if (!supabase) {
       return INITIAL_STORIES.find((s) => s.slug === slug) || null;
     }

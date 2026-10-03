@@ -184,6 +184,27 @@ export interface Database {
         };
         Relationships: [];
       };
+      page_views: {
+        Row: {
+          id: string;
+          path: string;
+          view_date: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          path: string;
+          view_date?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          path?: string;
+          view_date?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
